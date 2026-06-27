@@ -178,20 +178,24 @@
         try {
           const padded = value.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((value.length + 3) % 4)
           const items = JSON.parse(atob(padded))
-          state.cart = Object.fromEntries(items.map(([id, qty]) => [String(id), Math.max(0, Number(qty) || 0)]))
+          state.cart = Object.fromEntries(items.map(([key, qty]) => {
+            const rawKey = String(key)
+            const product = state.catalog.find((item) => item.cart_key === rawKey || item.id === rawKey)
+            return [product?.cart_key || rawKey, Math.max(0, Number(qty) || 0)]
+          }))
         } catch (error) {
           state.cart = {}
         }
       }
 
-      function setQty(id, qty) {
-        state.cart[String(id)] = Math.max(0, Number(qty) || 0)
+      function setQty(key, qty) {
+        state.cart[String(key)] = Math.max(0, Number(qty) || 0)
         render()
       }
 
       function cartItems() {
         return Object.entries(state.cart)
-          .map(([id, qty]) => [state.catalog.find((item) => item.id === id), Number(qty)])
+          .map(([key, qty]) => [state.catalog.find((item) => item.cart_key === key || item.id === key), Number(qty)])
           .filter(([item, qty]) => item && qty > 0)
       }
 
@@ -212,9 +216,9 @@
               <div class="muted">${escapeHtml(item.type || item.sku || '')}</div>
               <div class="price">${money.format(item.price || 0)}</div>
               <div class="qty-row">
-                <button type="button" onclick="setQty('${item.id}', (state.cart['${item.id}'] || 0) - 1)">-</button>
-                <input type="number" min="0" step="1" value="${state.cart[item.id] || 0}" onchange="setQty('${item.id}', this.value)" />
-                <button type="button" onclick="setQty('${item.id}', (state.cart['${item.id}'] || 0) + 1)">+</button>
+                <button type="button" onclick="setQty('${escapeJs(item.cart_key)}', (state.cart['${escapeJs(item.cart_key)}'] || 0) - 1)">-</button>
+                <input type="number" min="0" step="1" value="${state.cart[item.cart_key] || 0}" onchange="setQty('${escapeJs(item.cart_key)}', this.value)" />
+                <button type="button" onclick="setQty('${escapeJs(item.cart_key)}', (state.cart['${escapeJs(item.cart_key)}'] || 0) + 1)">+</button>
               </div>
             </div>
           </article>
@@ -248,6 +252,10 @@ ${shareLink.value}`)
         return String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]))
       }
 
+      function escapeJs(value) {
+        return String(value ?? '').replace(/['\]/g, '\$&')
+      }
+
       openCartButton.addEventListener('click', () => { renderCart(); cartDialog.showModal() })
       closeCartButton.addEventListener('click', () => cartDialog.close())
       document.getElementById('copyLinkButton').addEventListener('click', async () => {
@@ -258,7 +266,11 @@ ${shareLink.value}`)
         .then((response) => response.json())
         .then((data) => {
           window.catalogConfig = data
-          state.catalog = (data.products || []).map((item) => ({ ...item, id: String(item.id) }))
+          state.catalog = (data.products || []).map((item) => ({
+            ...item,
+            id: String(item.id),
+            cart_key: String(item.cart_key || item.sku || item.id),
+          }))
           document.getElementById('siteTitle').textContent = data.siteTitle || 'BlissByMeera'
           document.getElementById('productCount').textContent = `${state.catalog.length} products`
           decodeCart(new URLSearchParams(window.location.search).get('cart'))
