@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BlissByMeera</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f7f7f5;
+        --surface: #ffffff;
+        --line: #dedbd2;
+        --text: #20201d;
+        --muted: #6d6a61;
+        --accent: #0f766e;
+        --accent-dark: #115e59;
+        --danger: #9f1239;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      button, input { font: inherit; }
+      button { border: 0; cursor: pointer; }
+      .shell { max-width: 1180px; margin: 0 auto; padding: 22px; }
+      header {
+        min-height: 84px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        border-bottom: 1px solid var(--line);
+      }
+      h1 { margin: 0; font-size: clamp(1.5rem, 4vw, 2.45rem); letter-spacing: 0; }
+      .muted { color: var(--muted); }
+      .cart-button, .primary-button {
+        min-height: 42px;
+        border-radius: 8px;
+        background: var(--accent);
+        color: #fff;
+        padding: 0 14px;
+        font-weight: 760;
+      }
+      .secondary-button {
+        min-height: 38px;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: #fff;
+        color: var(--text);
+        padding: 0 12px;
+        font-weight: 700;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+        gap: 16px;
+        padding: 24px 0;
+        align-items: start;
+      }
+      .product {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      .product img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: contain;
+        background: #fbfbfa;
+        border-bottom: 1px solid var(--line);
+        border-radius: 8px 8px 0 0;
+      }
+      .product-body { width: 100%; padding: 12px; display: grid; gap: 8px; min-width: 0; max-width: 100%; }
+      .product-body > * {
+        min-width: 0;
+        max-width: 100%;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+      }
+      .product-title {
+        max-width: 100%;
+        min-width: 0;
+        font-weight: 780;
+        line-height: 1.25;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        hyphens: auto;
+      }
+      .price { max-width: 100%; overflow-wrap: anywhere; font-size: 1.1rem; font-weight: 820; }
+      .qty-row { width: 100%; display: grid; grid-template-columns: 40px minmax(0, 1fr) 40px; gap: 8px; align-items: center; }
+      .qty-row button { min-height: 36px; border-radius: 8px; background: #ece9df; font-weight: 850; }
+      .qty-row input { min-height: 36px; border: 1px solid var(--line); border-radius: 8px; text-align: center; }
+      dialog {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 0;
+        width: min(620px, calc(100vw - 30px));
+      }
+      dialog::backdrop { background: rgba(0, 0, 0, 0.32); }
+      .cart-panel { padding: 18px; display: grid; gap: 14px; }
+      .cart-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+      .cart-line { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+      .cart-line strong,
+      .cart-line .muted { max-width: 100%; overflow-wrap: anywhere; word-break: break-word; }
+      .cart-total { display: flex; justify-content: space-between; font-size: 1.15rem; font-weight: 850; }
+      .share-box { display: grid; gap: 8px; }
+      .share-box input { min-height: 40px; border: 1px solid var(--line); border-radius: 8px; padding: 0 10px; }
+      .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+      .empty { padding: 28px; color: var(--muted); text-align: center; }
+      @media (max-width: 620px) {
+        header { align-items: stretch; flex-direction: column; padding-bottom: 16px; }
+        .cart-button { width: 100%; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header>
+        <div>
+          <h1 id="siteTitle">BlissByMeera</h1>
+          <div id="productCount" class="muted">Loading catalog...</div>
+        </div>
+        <button id="openCartButton" class="cart-button" type="button">Cart (0)</button>
+      </header>
+      <main id="products" class="grid"></main>
+    </div>
+
+    <dialog id="cartDialog">
+      <div class="cart-panel">
+        <div class="cart-header">
+          <h2 style="margin: 0;">Cart</h2>
+          <button id="closeCartButton" class="secondary-button" type="button">Close</button>
+        </div>
+        <div id="cartLines"></div>
+        <div id="cartTotal" class="cart-total"></div>
+        <div class="share-box">
+          <label class="muted" for="shareLink">Shareable cart link</label>
+          <input id="shareLink" readonly />
+        </div>
+        <div class="actions">
+          <button id="copyLinkButton" class="secondary-button" type="button">Copy link</button>
+          <a id="whatsappLink" class="primary-button" href="#" target="_blank" rel="noreferrer" style="display: inline-grid; place-items: center; text-decoration: none;">Share on WhatsApp</a>
+        </div>
+      </div>
+    </dialog>
+
+    <script>
+      const state = { catalog: [], cart: {} }
+      const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 })
+      const productsEl = document.getElementById('products')
+      const cartDialog = document.getElementById('cartDialog')
+      const openCartButton = document.getElementById('openCartButton')
+      const closeCartButton = document.getElementById('closeCartButton')
+      const cartLines = document.getElementById('cartLines')
+      const cartTotal = document.getElementById('cartTotal')
+      const shareLink = document.getElementById('shareLink')
+      const whatsappLink = document.getElementById('whatsappLink')
+
+      function encodeCart() {
+        const compact = Object.entries(state.cart)
+          .filter(([, qty]) => Number(qty) > 0)
+          .map(([id, qty]) => [id, Number(qty)])
+        return btoa(JSON.stringify(compact)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+      }
+
+      function decodeCart(value) {
+        if (!value) return
+        try {
+          const padded = value.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((value.length + 3) % 4)
+          const items = JSON.parse(atob(padded))
+          state.cart = Object.fromEntries(items.map(([id, qty]) => [String(id), Math.max(0, Number(qty) || 0)]))
+        } catch (error) {
+          state.cart = {}
+        }
+      }
+
+      function setQty(id, qty) {
+        state.cart[String(id)] = Math.max(0, Number(qty) || 0)
+        render()
+      }
+
+      function cartItems() {
+        return Object.entries(state.cart)
+          .map(([id, qty]) => [state.catalog.find((item) => item.id === id), Number(qty)])
+          .filter(([item, qty]) => item && qty > 0)
+      }
+
+      function cartUrl() {
+        const url = new URL(window.location.href)
+        const encoded = encodeCart()
+        if (encoded) url.searchParams.set('cart', encoded)
+        else url.searchParams.delete('cart')
+        return url.toString()
+      }
+
+      function renderProducts() {
+        productsEl.innerHTML = state.catalog.map((item) => `
+          <article class="product">
+            <img src="${item.image}" alt="${escapeHtml(item.name)}" />
+            <div class="product-body">
+              <div class="product-title">${escapeHtml(item.name)}</div>
+              <div class="muted">${escapeHtml(item.type || item.sku || '')}</div>
+              <div class="price">${money.format(item.price || 0)}</div>
+              <div class="qty-row">
+                <button type="button" onclick="setQty('${item.id}', (state.cart['${item.id}'] || 0) - 1)">-</button>
+                <input type="number" min="0" step="1" value="${state.cart[item.id] || 0}" onchange="setQty('${item.id}', this.value)" />
+                <button type="button" onclick="setQty('${item.id}', (state.cart['${item.id}'] || 0) + 1)">+</button>
+              </div>
+            </div>
+          </article>
+        `).join('') || '<div class="empty">No products are available.</div>'
+      }
+
+      function renderCart() {
+        const items = cartItems()
+        const total = items.reduce((sum, [item, qty]) => sum + Number(item.price || 0) * qty, 0)
+        openCartButton.textContent = `Cart (${items.reduce((sum, [, qty]) => sum + qty, 0)})`
+        cartLines.innerHTML = items.map(([item, qty]) => `
+          <div class="cart-line">
+            <div><strong>${escapeHtml(item.name)}</strong><div class="muted">${qty} x ${money.format(item.price || 0)}</div></div>
+            <strong>${money.format((item.price || 0) * qty)}</strong>
+          </div>
+        `).join('') || '<div class="empty">Your cart is empty.</div>'
+        cartTotal.innerHTML = `<span>Total</span><span>${money.format(total)}</span>`
+        shareLink.value = cartUrl()
+        const message = encodeURIComponent(`Cart from ${document.getElementById('siteTitle').textContent}
+${shareLink.value}`)
+        const number = window.catalogConfig?.whatsappNumber || ''
+        whatsappLink.href = `https://wa.me/${number}?text=${message}`
+      }
+
+      function render() {
+        renderProducts()
+        renderCart()
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]))
+      }
+
+      openCartButton.addEventListener('click', () => { renderCart(); cartDialog.showModal() })
+      closeCartButton.addEventListener('click', () => cartDialog.close())
+      document.getElementById('copyLinkButton').addEventListener('click', async () => {
+        await navigator.clipboard.writeText(shareLink.value)
+      })
+
+      fetch('products.json')
+        .then((response) => response.json())
+        .then((data) => {
+          window.catalogConfig = data
+          state.catalog = (data.products || []).map((item) => ({ ...item, id: String(item.id) }))
+          document.getElementById('siteTitle').textContent = data.siteTitle || 'BlissByMeera'
+          document.getElementById('productCount').textContent = `${state.catalog.length} products`
+          decodeCart(new URLSearchParams(window.location.search).get('cart'))
+          render()
+          if (cartItems().length) cartDialog.showModal()
+        })
+        .catch(() => {
+          productsEl.innerHTML = '<div class="empty">Could not load products.json.</div>'
+        })
+    </script>
+  </body>
+</html>
