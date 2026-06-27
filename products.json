@@ -1,16 +1,8 @@
 {
   "siteTitle": "BlissByMeera",
   "whatsappNumber": "",
-  "generatedAt": "2026-06-27T17:01:53.296294Z",
+  "generatedAt": "2026-06-27T17:05:21.408423Z",
   "products": [
-    {
-      "id": "39",
-      "name": "Dolphin Enamel Pendant Necklace",
-      "sku": "SS-DOL-001",
-      "type": "necklace",
-      "price": 120.0,
-      "image": "assets/product-39.jpg"
-    },
     {
       "id": "38",
       "name": "Emerald Cat Pendant Necklace",
