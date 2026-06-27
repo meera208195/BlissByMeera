@@ -209,16 +209,16 @@
 
       function renderProducts() {
         productsEl.innerHTML = state.catalog.map((item) => `
-          <article class="product">
+          <article class="product" data-cart-key="${escapeHtml(item.cart_key)}">
             <img src="${item.image}" alt="${escapeHtml(item.name)}" />
             <div class="product-body">
               <div class="product-title">${escapeHtml(item.name)}</div>
               <div class="muted">${escapeHtml(item.type || item.sku || '')}</div>
               <div class="price">${money.format(item.price || 0)}</div>
               <div class="qty-row">
-                <button type="button" onclick="setQty('${escapeJs(item.cart_key)}', (state.cart['${escapeJs(item.cart_key)}'] || 0) - 1)">-</button>
-                <input type="number" min="0" step="1" value="${state.cart[item.cart_key] || 0}" onchange="setQty('${escapeJs(item.cart_key)}', this.value)" />
-                <button type="button" onclick="setQty('${escapeJs(item.cart_key)}', (state.cart['${escapeJs(item.cart_key)}'] || 0) + 1)">+</button>
+                <button type="button" data-cart-action="decrement">-</button>
+                <input type="number" min="0" step="1" value="${state.cart[item.cart_key] || 0}" data-cart-action="quantity" />
+                <button type="button" data-cart-action="increment">+</button>
               </div>
             </div>
           </article>
@@ -252,14 +252,27 @@ ${shareLink.value}`)
         return String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]))
       }
 
-      function escapeJs(value) {
-        return String(value ?? '').replace(/['\]/g, '\$&')
-      }
-
       openCartButton.addEventListener('click', () => { renderCart(); cartDialog.showModal() })
       closeCartButton.addEventListener('click', () => cartDialog.close())
       document.getElementById('copyLinkButton').addEventListener('click', async () => {
         await navigator.clipboard.writeText(shareLink.value)
+      })
+      productsEl.addEventListener('click', (event) => {
+        const button = event.target.closest('button[data-cart-action]')
+        if (!button) return
+        const productEl = button.closest('[data-cart-key]')
+        const key = productEl?.dataset.cartKey
+        if (!key) return
+        const current = Number(state.cart[key] || 0)
+        setQty(key, current + (button.dataset.cartAction === 'increment' ? 1 : -1))
+      })
+      productsEl.addEventListener('change', (event) => {
+        const input = event.target.closest('input[data-cart-action="quantity"]')
+        if (!input) return
+        const productEl = input.closest('[data-cart-key]')
+        const key = productEl?.dataset.cartKey
+        if (!key) return
+        setQty(key, input.value)
       })
 
       fetch('products.json')

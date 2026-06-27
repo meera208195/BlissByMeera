@@ -1,7 +1,7 @@
 {
   "siteTitle": "BlissByMeera",
   "whatsappNumber": "",
-  "generatedAt": "2026-06-27T19:52:47.958606Z",
+  "generatedAt": "2026-06-27T19:57:43.466126Z",
   "products": [
     {
       "id": "39",
@@ -9,7 +9,7 @@
       "name": "Dolphin Enamel Pendant Necklace",
       "sku": "SS-DOL-001",
       "type": "necklace",
-      "price": 0.0,
+      "price": 120.0,
       "image": "assets/product-39.jpg"
     },
     {
@@ -18,7 +18,7 @@
       "name": "Emerald Cat Pendant Necklace",
       "sku": "CAT-EM-001",
       "type": "pendant necklace",
-      "price": 0.0,
+      "price": 110.0,
       "image": "assets/product-38.jpg"
     },
     {
@@ -27,7 +27,7 @@
       "name": "Celestial Star Charm Anklet",
       "sku": "ANK-STR-GLD-01",
       "type": "anklet",
-      "price": 0.0,
+      "price": 140.0,
       "image": "assets/product-34.jpg"
     }
   ]
