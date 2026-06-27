@@ -1,7 +1,7 @@
 {
   "siteTitle": "BlissByMeera",
   "whatsappNumber": "",
-  "generatedAt": "2026-06-27T20:22:33.455487Z",
+  "generatedAt": "2026-06-27T20:26:05.891239Z",
   "products": [
     {
       "id": "23",
@@ -9,7 +9,7 @@
       "name": "Emerald Green Dial Gold Link Watch",
       "sku": "WA-9491-GRN",
       "type": "watch",
-      "price": 0.0,
+      "price": 120.0,
       "image": "assets/product-23.jpg"
     },
     {
@@ -18,7 +18,7 @@
       "name": "Elegant Green Dial Gold Chain Watch",
       "sku": "WA-9491-GLD-GRN",
       "type": "watch",
-      "price": 0.0,
+      "price": 150.0,
       "image": "assets/product-22.jpg"
     },
     {
@@ -27,7 +27,7 @@
       "name": "Gold Link Bracelet Watch with Green Dial",
       "sku": "WA9491-GD-GRN",
       "type": "watch",
-      "price": 0.0,
+      "price": 110.0,
       "image": "assets/product-21.jpg"
     }
   ]
