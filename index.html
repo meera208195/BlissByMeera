@@ -3,6 +3,9 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <title>BlissByMeera</title>
     <style>
       :root {
@@ -210,7 +213,7 @@
       function renderProducts() {
         productsEl.innerHTML = state.catalog.map((item) => `
           <article class="product" data-cart-key="${escapeHtml(item.cart_key)}">
-            <img src="${item.image}" alt="${escapeHtml(item.name)}" />
+            <img src="${item.image}?v=${encodeURIComponent(window.catalogVersion || '')}" alt="${escapeHtml(item.name)}" />
             <div class="product-body">
               <div class="product-title">${escapeHtml(item.name)}</div>
               <div class="muted">${escapeHtml(item.type || item.sku || '')}</div>
@@ -275,10 +278,11 @@ ${shareLink.value}`)
         setQty(key, input.value)
       })
 
-      fetch('products.json')
+      fetch(`products.json?v=${Date.now()}`, { cache: 'no-store' })
         .then((response) => response.json())
         .then((data) => {
           window.catalogConfig = data
+          window.catalogVersion = data.generatedAt || Date.now()
           state.catalog = (data.products || []).map((item) => ({
             ...item,
             id: String(item.id),

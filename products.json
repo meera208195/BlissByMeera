@@ -1,34 +1,25 @@
 {
   "siteTitle": "BlissByMeera",
-  "whatsappNumber": "",
-  "generatedAt": "2026-06-27T20:26:05.891239Z",
+  "whatsappNumber": "8078024149",
+  "generatedAt": "2026-07-04T14:03:01.381063Z",
   "products": [
     {
-      "id": "23",
-      "cart_key": "WA-9491-GRN",
-      "name": "Emerald Green Dial Gold Link Watch",
-      "sku": "WA-9491-GRN",
-      "type": "watch",
-      "price": 120.0,
-      "image": "assets/product-23.jpg"
+      "id": "25",
+      "cart_key": "ET-001-ELP",
+      "name": "Royal Elephant Motif Necklace Set",
+      "sku": "ET-001-ELP",
+      "type": "jewellery set",
+      "price": 0.0,
+      "image": "assets/product-25.jpg"
     },
     {
-      "id": "22",
-      "cart_key": "WA-9491-GLD-GRN",
-      "name": "Elegant Green Dial Gold Chain Watch",
-      "sku": "WA-9491-GLD-GRN",
-      "type": "watch",
-      "price": 150.0,
-      "image": "assets/product-22.jpg"
-    },
-    {
-      "id": "21",
-      "cart_key": "WA9491-GD-GRN",
-      "name": "Gold Link Bracelet Watch with Green Dial",
-      "sku": "WA9491-GD-GRN",
-      "type": "watch",
-      "price": 110.0,
-      "image": "assets/product-21.jpg"
+      "id": "24",
+      "cart_key": "LT-EN-001",
+      "name": "Lotus Motif Enamel Necklace Set",
+      "sku": "LT-EN-001",
+      "type": "jewellery set",
+      "price": 0.0,
+      "image": "assets/product-24.jpg"
     }
   ]
 }
